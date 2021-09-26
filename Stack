@@ -1,0 +1,101 @@
+#include<stdio.h>
+#include<limits.h>
+#include<stdlib.h>
+
+struct stack{
+	int capacity;
+	int size;
+	int *arr;
+};
+
+struct stack *createStack(int capacity){
+	struct stack *temp = (struct stack *)malloc(sizeof(struct stack));
+	if(!temp){
+		printf("Failed to initialize the array.\n");
+		return NULL;
+	}
+	
+	temp->capacity = capacity;
+	temp->size = -1;
+	temp->arr = (int *)malloc(sizeof(capacity * sizeof(int)));
+	if(!temp->arr){
+		printf("Failed to initialize the array.\n");
+	}
+	return temp;	
+}
+
+int isEmpty(struct stack *stk){
+	return (stk->size == -1);
+}
+
+int isFull(struct stack *stk){
+	return (stk->size == stk->capacity - 1);
+}
+
+void push(struct stack *stk , int data){
+	if(isFull(stk)){
+		printf("The stack is Full.\n");
+		return;
+	}
+	stk->arr[++stk->size] = data;
+}
+
+int pop(struct stack *stk){
+	return stk->arr[stk->size--];
+}
+
+int topElement(struct stack *stk){
+	return stk->arr[stk->size];
+}
+
+void display(struct stack *stk){
+	if(stk->size == -1){
+		printf("The stack is empty DUDE. Fill it first.\n");
+		return;
+	}
+	
+	int size = stk->size;
+	int i;
+	
+	for(i = size ; i >= 0 ; i--){
+		printf("%d ",stk->arr[i]);
+	}
+	printf("\n");
+}
+
+void replace(struct stack *stk , int element_to_replace , int data){
+	int size = stk->size;
+	int i;
+	
+	for(i = size ; i >= 0 ; i--){
+		if(stk->arr[i] == element_to_replace){
+			stk->arr[i] = data;
+		}
+	}
+}
+
+
+int main(){
+	
+	struct stack *stk = createStack(5);
+	push(stk , 1);
+	push(stk , 2);
+	push(stk , 3);
+	push(stk , 4);
+	push(stk , 5);
+	
+	printf("The current stack is : ");
+	display(stk);
+	
+	int temp = pop(stk);
+	printf("After poping one time , the array has now become : ");
+	display(stk);
+	
+	printf("The popped element is : %d\n",temp);
+	
+	replace(stk,4,7);
+	printf("After replacing the element 4 by 7 in the array : ");
+	display(stk);
+		
+	return 0;
+}
