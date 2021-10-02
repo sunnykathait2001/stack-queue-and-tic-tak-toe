@@ -1,0 +1,224 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+// this function as from the name itself , ask for the user's choice of type of game he wants
+// this fucntion will return the integer 1 or 2
+int choice(){
+	int ch;
+
+	printf("\npress 1 for 1st player vs computer.\n");
+	printf("\npress 2 for 1st player vs 2nd player.\n");
+	
+	printf("\nEnter your choice : ");
+	scanf("%d",&ch);
+	if(ch == 1 || ch == 2){
+		return ch;
+	}else{
+		printf("Enter a valid number (1 or 2)\n");
+		choice();
+	}
+}
+
+// Global matrix -> this matrix will be used by both the players.
+char matrix[3][3];
+
+// declaring the functions to be used;
+char check(void); // To check the result of the matrix.
+
+void init_matrix(void); // to initailize the matrix
+
+void get_player_move(void); // to get the player move
+
+void get_2nd_player_move(void);	// another player move
+
+void get_computer_move(void); // computer move
+
+void disp_matrix(); // displaying the resultant matrix
+
+// driver function
+int main(){
+	char done;
+	
+	printf("\t\t\t\tThis is the game of Tic Tac Toe.\n");
+	printf("\t\t-------------------------------------------------------------\n");
+	printf("\t\t\t    You will be playing against the computer.\n");
+	
+	done = ' ';
+	
+	int num = choice();
+
+	init_matrix();	
+	
+	if(num == 2){
+		do{
+			disp_matrix();
+			get_player_move();
+			disp_matrix();
+			done = check();
+			if(done != ' ') break;
+			get_2nd_player_move();
+			done = check();
+		}while(done == ' ');
+	}
+	
+	if(num == 1){
+		do{
+			disp_matrix();
+			get_player_move();
+			done = check();
+			if(done != ' ') break;
+			get_computer_move();
+			done = check();
+		}while(done == ' ');
+	}
+	
+	printf("\n\n");
+	if(done == 'X') printf("X Won.\n");
+	else printf("Y won.\n");
+	printf("\n\n");
+	disp_matrix();
+	
+	return 0;
+
+	
+}
+
+//All the functions declared earlier is defined here.
+
+void init_matrix(){
+	int i , j;
+	for(i = 0 ; i < 3 ; i++){
+		for(j = 0 ; j < 3 ; j++) matrix[i][j] = ' ';
+	}
+}
+
+// pretty same for the 2nd user. see the 2nd user functions for get to know what's happening
+void get_player_move(){
+	int x , y;
+	int i , j;
+	int count = 0;
+	
+	for(i = 0 ; i < 3 ; i++){
+		for(j = 0 ; j < 3 ; j++){
+			if(matrix[i][j] != ' '){
+				count += 1;
+			}else{
+				break;
+			}
+		}
+	}
+	
+	if(count == 9){
+		printf("Draw\n");
+		exit(0);
+	}
+	
+	printf("1st Person - Enter X , Y coordinates for your move: ");
+	scanf("%d%d",&x,&y);
+	
+	x--; y--;
+	
+	if(matrix[x][y] != ' '){
+		printf("Invalid move, try again.\n");
+		get_player_move();
+	}else{
+		matrix[x][y] = 'X';
+	}
+}
+
+// get the player position
+void get_2nd_player_move(){
+	int x , y;
+	int i  , j;
+	int count = 0; // to keep track if all the positions are set
+	
+	// if draw = 9 then all the positions are set. see for the logic yourself(- its simple -). 
+	for(i = 0 ; i < 3 ; i++){
+		for(j = 0 ; j < 3 ; j++){
+			if(matrix[i][j] != ' '){
+				count += 1;
+			}else{
+				break;
+			}
+		}
+	}
+	
+	// check for draw here..
+	if(count == 9){
+		printf("Draw\n");
+		exit(0);
+	}
+	
+	printf("2nd Person - Enter X , Y coordinates for your move: ");
+	scanf("%d%d",&x,&y);
+	
+	x--; y--; // since indexing start from 0. for ex -> 1 for us is 0 for matrix(hope you understande)
+	
+	if(matrix[x][y] != ' '){
+		printf("Invalid move, try again.\n");
+		get_2nd_player_move(); // recalling the funtion if the user enters a invalid position
+	}
+	else{
+		matrix[x][y] = 'O';
+	}
+}
+
+// No AI used , just a simple given commands for the computer
+void get_computer_move(void){
+	int i , j;
+	for(i = 0 ; i < 3 ; i++){
+		for(j = 0 ; j < 3 ; j++){
+			if(matrix[i][j] == ' ') break;
+		}
+		if(matrix[i][j] == ' ') break;
+	}
+	
+	// to check for the draw
+	if(i*j == 9){
+		printf("draw\n");
+		exit(0);
+	}else{
+		matrix[i][j] = 'O';
+	}
+}
+
+// for displaying the matrix
+void disp_matrix(){
+	int t;
+	for(t = 0; t < 3 ; t++){
+		printf(" %c | %c | %c",matrix[t][0] ,
+			matrix[t][1] , matrix[t][2]);
+		if(t != 2) printf("\n---|---|---\n");
+	}
+	printf("\n");
+}
+
+// checking all the winning positions
+char check(){
+	int i;
+	
+	// for rows
+	for(i = 0 ; i < 3 ; i++){
+		if(matrix[i][0] == matrix[i][1] && matrix[i][0] == matrix[i][2]) return matrix[i][0];
+	
+	}
+	
+	// for columns
+	for(i = 0 ; i < 3 ; i++){
+		if(matrix[0][i] == matrix[1][i] && matrix[0][i] == matrix[2][i]) return matrix[0][i];
+	}
+	
+	// for diagonal from the start
+	if(matrix[0][0] == matrix[1][1] && matrix[1][1] == matrix[2][2]) return matrix[0][0];
+	
+	// for diagonal form the end
+	if(matrix[0][2] == matrix[1][1] && matrix[1][1] == matrix[2][0]) return matrix[0][2];
+
+	// otherwise return this
+	return ' ';
+}	
+
+// add a option to check for the history of the games you ever played. Do it by yourself..
+
+
+
